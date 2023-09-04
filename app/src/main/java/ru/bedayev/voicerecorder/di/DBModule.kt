@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.bedayev.voicerecorder.database.RecordDatabase
+import ru.bedayev.voicerecorder.database.RecordDatabaseDao
 import javax.inject.Singleton
 
 @Module
@@ -27,4 +28,9 @@ class DBModule {
             .fallbackToDestructiveMigration()
             .build()
     }
+
+    @Provides
+    fun provideDao(
+        database: RecordDatabase
+    ): RecordDatabaseDao = database.recordDao()
 }

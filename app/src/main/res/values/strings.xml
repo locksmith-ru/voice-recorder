@@ -3,4 +3,21 @@
 
     <string name="title_record">Record</string>
     <string name="title_list_records">List</string>
+
+    <string name="default_file_name">Record</string>
+    <string name="toast_recording_finish">The record saved</string>
+    <string name="notification_recording">Recording is in progress…</string>
+    <string name="toast_recording_start">Recording has started</string>
+    <string name="file_is_not_exist_text">Audio file not found</string>
+    <string name="file_deleted_text">Audio file successfully deleted</string>
+    <string name="dialog_title_delete">Confirm the deletion</string>
+    <string name="dialog_text_delete">Delete this entry?</string>
+    <string name="dialog_action_yes">Yes</string>
+    <string name="dialog_action_no">No</string>
+
+
+    <string name="toast_recording_permissions">Recording is impossible without permission</string>
+    <string name="notification_channel_id" translatable="false">RecordService</string>
+    <string name="notification_channel_name" translatable="true">Recorder</string>
+
 </resources>
