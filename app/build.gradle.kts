@@ -40,6 +40,10 @@ android {
     buildFeatures{
         viewBinding = true
     }
+
+    dataBinding{
+        enable = true
+    }
 }
 
 dependencies {
@@ -71,6 +75,9 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
+    // для привязки интерфейса через методы класса Data BindingUtil
+    //kapt("com.android.databinding:compiler:3.1.4")
 
     // Logging dependencies
     implementation("com.jakewharton.timber:timber:5.0.1")

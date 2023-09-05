@@ -59,15 +59,17 @@ class RecordViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadTime(): Long = withContext(Dispatchers.IO){
+    private suspend fun loadTime(): Long =
+        withContext(Dispatchers.IO){
         prefs.getLong(TRIGGER_TIME, 0L)
     }
 
-    private suspend fun saveTime(triggerTime: Long) = withContext(Dispatchers.IO){
+    private suspend fun saveTime(triggerTime: Long) =
+        withContext(Dispatchers.IO){
         prefs.edit().putLong(TRIGGER_TIME, triggerTime).apply()
     }
 
-    private fun resetTimer(){
+    fun resetTimer(){
         _elapsedTime.value = timeFormatter(0)
         viewModelScope.launch { saveTime(0) }
     }

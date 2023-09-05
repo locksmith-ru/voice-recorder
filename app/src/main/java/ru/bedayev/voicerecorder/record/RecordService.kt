@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,9 +27,10 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
-class RecordService @Inject constructor(
-    private val mDatabase: RecordDatabaseDao
-) : Service() {
+@AndroidEntryPoint
+class RecordService : Service() {
+
+    @Inject lateinit var mDatabase: RecordDatabaseDao
 
     private var mFileName: String? = null
     private var mFilePath: String? = null
@@ -41,17 +43,26 @@ class RecordService @Inject constructor(
 
     private val mJob = Job()
     private val mHandler = CoroutineExceptionHandler { _, e ->
-        Timber.e("an error has occurred:${e.message}", e)
+        Timber.e("an error has occurred: ${e.message}", e)
     }
     private val mUiScope = CoroutineScope(Dispatchers.Main + mJob + mHandler)
+
+    private var isRunning: Boolean = false
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        /*isRunning = true
+        val broadCastIntent = Intent()
+        broadCastIntent.action = "ru.bedayev.voicerecorder.record.RecordService.ACTION_VOICE_RECORD"
+        broadCastIntent.putExtra("isRunning", isRunning)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadCastIntent)*/
+
         mCountRecords = intent?.extras?.getInt("COUNT")
         startRecording()
+        Timber.d("onStartCommand")
         return START_NOT_STICKY
     }
 
@@ -143,14 +154,22 @@ class RecordService @Inject constructor(
             mUiScope.launch {
                 withContext(Dispatchers.IO){
                     mDatabase.insert(record = recordingItem)
+                    Timber.d("save record to database, file path=${recordingItem.filePath}")
                 }
             }
         }catch (e: Exception){
-            Timber.e("an error has occurred:${e.message}", e)
+            Timber.e("an error has occurred: ${e.message}", e)
         }
     }
 
     override fun onDestroy() {
+
+        /*isRunning = false
+        val broadCastIntent = Intent()
+        broadCastIntent.action = "ru.bedayev.voicerecorder.record.RecordService.ACTION_VOICE_RECORD"
+        broadCastIntent.putExtra("isRunning", isRunning)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadCastIntent)*/
+
         if (mRecorder != null)
             stopRecording()
         super.onDestroy()
