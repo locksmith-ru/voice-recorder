@@ -38,8 +38,13 @@ android {
         jvmTarget = "1.8"
     }
 
+    composeOptions{
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+
     buildFeatures{
         viewBinding = true
+        compose = true
     }
 
     dataBinding{
@@ -54,8 +59,20 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    // Compose
+    val composeBom = platform("androidx.compose:compose-bom:2023.09.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.foundation:foundation-layout")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.ui:ui-tooling")
+
     // coroutines
-    val coroutinesVersion = "1.7.2"
+    val coroutinesVersion = "1.7.3"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
 
@@ -92,7 +109,7 @@ dependencies {
 
 
     // Leakcanary
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     testImplementation("junit:junit:4.13.2")
     
