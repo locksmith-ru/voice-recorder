@@ -16,7 +16,7 @@ import kotlin.text.*
 
 class ListRecordAdapter(
     private val onItemClicked: (String) -> Unit,
-    private val onLongPressed: (Long, String?) -> Unit
+    private val onRemoveItem: (Long, String?) -> Unit
 ) : RecyclerView.Adapter<ListRecordAdapter.ViewHolder>() {
 
     var data: List<RecordingItem> = emptyList()
@@ -67,8 +67,11 @@ class ListRecordAdapter(
                     }
                 }
                 cardView.setOnLongClickListener {
-                    onLongPressed(record.id, record.filePath)
+                    onRemoveItem(record.id, record.filePath)
                     false
+                }
+                removeButton.setOnClickListener{
+                    onRemoveItem(record.id, record.filePath)
                 }
             }
 

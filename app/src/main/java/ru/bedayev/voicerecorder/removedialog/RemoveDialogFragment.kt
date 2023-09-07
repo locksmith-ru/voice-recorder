@@ -20,18 +20,18 @@ class RemoveDialogFragment : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setTitle(R.string.dialog_title_delete)
             .setMessage(R.string.dialog_text_delete)
-            .setPositiveButton(R.string.dialog_action_yes) { dialog, which ->
+            .setPositiveButton(R.string.dialog_action_yes) { dialog, _ ->
                 try {
                     itemId?.let { viewModel.removeItem(it) }
                     itemPath?.let { viewModel.removeFile(it, requireContext()) }
-                } catch (e: java.lang.Exception) {
-                    Timber.e("deleteFileDialog", "exception", e)
+                } catch (e: Exception) {
+                    Timber.e("deleteFileDialog", "error:${e.message}", e)
                 }
                 dialog.cancel()
             }
             .setNegativeButton(
                 R.string.dialog_action_no
-            ) { dialog, which ->
+            ) { dialog, _ ->
                 dialog.cancel()
             }
             .create()
