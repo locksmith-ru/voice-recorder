@@ -4,6 +4,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -81,6 +82,17 @@ dependencies {
 
     // Logging dependencies
     implementation("com.jakewharton.timber:timber:5.0.1")
+
+    // Exo player
+    val exoPlayerVersion = "1.1.1"
+    implementation("androidx.media3:media3-exoplayer:$exoPlayerVersion")
+    implementation("androidx.media3:media3-common:$exoPlayerVersion")
+    implementation("androidx.media3:media3-ui:$exoPlayerVersion")
+    implementation("androidx.media3:media3-session:$exoPlayerVersion")
+
+
+    // Leakcanary
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.10")
 
     testImplementation("junit:junit:4.13.2")
     

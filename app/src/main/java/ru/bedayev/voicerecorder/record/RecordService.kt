@@ -129,7 +129,7 @@ class RecordService : Service() {
             mFilePath += "/$mFileName"
 
             count++
-            f = File(mFilePath)
+            f = File(mFilePath!!)
         }while (f.exists() && !f.isDirectory)
     }
 

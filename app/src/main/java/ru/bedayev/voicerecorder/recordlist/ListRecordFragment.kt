@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -12,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.bedayev.voicerecorder.databinding.FragmentListRecordBinding
+import ru.bedayev.voicerecorder.player.PlayerFragment
+import ru.bedayev.voicerecorder.removedialog.RemoveDialogFragment
 
 @AndroidEntryPoint
 class ListRecordFragment : Fragment() {
@@ -34,7 +37,10 @@ class ListRecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.listRecordViewModel = viewModel
-        val adapter: ListRecordAdapter = ListRecordAdapter()
+        val adapter = ListRecordAdapter(
+            { playRecord(filePath = it) },
+            { id, path -> removeRecord(id = id, filePath = path) }
+        )
         binding.recyclerView.adapter = adapter
         lifecycleScope.launch {
             viewModel.records.flowWithLifecycle(
@@ -44,6 +50,22 @@ class ListRecordFragment : Fragment() {
             }
         }
         binding.lifecycleOwner = this
+    }
+
+    private fun playRecord(filePath: String) {
+        val playerFragment = PlayerFragment.newInstance(itemPath = filePath)
+        val transaction = requireActivity()
+            .supportFragmentManager
+            .beginTransaction()
+        playerFragment.show(transaction, "dialog_playback")
+    }
+
+    private fun removeRecord(id: Long, filePath: String?) {
+        val removeFragment = RemoveDialogFragment.newInstance(itemId = id, itemPath = filePath)
+        val transaction: FragmentTransaction = requireActivity()
+            .supportFragmentManager
+            .beginTransaction()
+        removeFragment.show(transaction, "dialog_remove")
     }
 
     override fun onDestroyView() {

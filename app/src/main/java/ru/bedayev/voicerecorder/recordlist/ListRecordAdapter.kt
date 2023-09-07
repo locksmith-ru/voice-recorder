@@ -3,14 +3,21 @@ package ru.bedayev.voicerecorder.recordlist
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import ru.bedayev.voicerecorder.R
 import ru.bedayev.voicerecorder.database.RecordingItem
 import ru.bedayev.voicerecorder.databinding.ListItemRecordBinding
+import timber.log.Timber
+import java.io.File
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.text.*
 
-class ListRecordAdapter : RecyclerView.Adapter<ListRecordAdapter.ViewHolder>() {
+class ListRecordAdapter(
+    private val onItemClicked: (String) -> Unit,
+    private val onLongPressed: (Long, String?) -> Unit
+) : RecyclerView.Adapter<ListRecordAdapter.ViewHolder>() {
 
     var data: List<RecordingItem> = emptyList()
         @SuppressLint("NotifyDataSetChanged")
@@ -41,7 +48,30 @@ class ListRecordAdapter : RecyclerView.Adapter<ListRecordAdapter.ViewHolder>() {
                 fileNameText.text = record.name
                 fileLengthText.text = String
                     .format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
+                cardView.setOnClickListener {
+                    val filePath = record.filePath
+                    val file = File(filePath)
+                    if (file.exists()) {
+                        try {
+                            onItemClicked(filePath)
+                        } catch (e: Exception) {
+                            Timber.e("onItemClick an error has occurred: ${e.message}", e)
+                        }
+                    } else {
+                        Toast.makeText(
+                            cardView.context,
+                            R.string.file_is_not_exist_text,
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    }
+                }
+                cardView.setOnLongClickListener {
+                    onLongPressed(record.id, record.filePath)
+                    false
+                }
             }
+
         }
     }
 
