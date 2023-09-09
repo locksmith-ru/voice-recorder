@@ -3,6 +3,7 @@ package ru.bedayev.voicerecorder.record
 import android.content.Context
 import android.os.CountDownTimer
 import android.os.SystemClock
+import androidx.annotation.IntegerRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.bedayev.voicerecorder.R
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -29,6 +32,9 @@ class RecordViewModel @Inject constructor(
     private val _elapsedTime: MutableStateFlow<String> = MutableStateFlow("")
     val elapsedTime = _elapsedTime.asStateFlow()
 
+    private val _imageResource: MutableStateFlow<Int> = MutableStateFlow(R.drawable.ic_mic_white_36)
+    val imageResource = _imageResource.asStateFlow()
+
     private lateinit var timer: CountDownTimer
 
     init {
@@ -37,11 +43,16 @@ class RecordViewModel @Inject constructor(
 
     private fun timeFormatter(time: Long): String{
         return String.format(
+            Locale.getDefault(),
             "%02d:%02d:%02d",
             TimeUnit.MILLISECONDS.toHours(time)%60,
             TimeUnit.MILLISECONDS.toMinutes(time)%60,
             TimeUnit.MILLISECONDS.toSeconds(time)%60
         )
+    }
+
+    fun setImageResource(@IntegerRes res: Int){
+        _imageResource.value = res
     }
 
     fun stopTimer(){

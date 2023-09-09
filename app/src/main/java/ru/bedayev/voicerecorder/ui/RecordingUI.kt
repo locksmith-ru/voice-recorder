@@ -26,12 +26,25 @@ import ru.bedayev.voicerecorder.record.RecordViewModel
 import ru.bedayev.voicerecorder.ui.theme.VoiceRecorderTheme
 
 @Composable
-fun RecordingUI(viewModel: RecordViewModel) {
+inline fun RecordingUI(
+    viewModel: RecordViewModel,
+    crossinline onPlayButtonClicked: () -> Unit
+) {
     val elapsedTime by viewModel.elapsedTime.collectAsState()
-    RecordingUI(elapsedTime = elapsedTime)
+    val imageResource by viewModel.imageResource.collectAsState()
+    RecordingUI(
+        elapsedTime = elapsedTime,
+        btnImgRes = imageResource,
+        onPlayButtonClicked = onPlayButtonClicked
+    )
 }
+
 @Composable
-fun RecordingUI(elapsedTime: String) {
+inline fun RecordingUI(
+    elapsedTime: String,
+    btnImgRes: Int,
+    crossinline onPlayButtonClicked: () -> Unit = {}
+) {
     Surface {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -45,12 +58,12 @@ fun RecordingUI(elapsedTime: String) {
                 fontSize = 36.sp
             )
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { onPlayButtonClicked() },
                 shape = MaterialTheme.shapes.medium,
                 elevation = FloatingActionButtonDefaults.elevation(48.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_mic_white_36),
+                    painter = painterResource(id = btnImgRes),
                     contentDescription = "start/stop button",
                     tint = colorResource(id = android.R.color.darker_gray)
                 )
@@ -74,7 +87,10 @@ fun RecordingUI(elapsedTime: String) {
 fun PreviewRecordingUI() {
     VoiceRecorderTheme {
         Surface {
-            RecordingUI(elapsedTime = "00:03:48")
+            RecordingUI(
+                elapsedTime = "00:03:48",
+                btnImgRes = R.drawable.ic_mic_white_36
+            )
         }
     }
 }

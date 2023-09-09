@@ -1,6 +1,7 @@
 package ru.bedayev.voicerecorder.record
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
@@ -20,6 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.bedayev.voicerecorder.MainActivity
 import ru.bedayev.voicerecorder.R
 import ru.bedayev.voicerecorder.databinding.FragmentRecordBinding
+import ru.bedayev.voicerecorder.ui.RecordingUI
+import ru.bedayev.voicerecorder.ui.theme.VoiceRecorderTheme
 import java.io.File
 
 @AndroidEntryPoint
@@ -43,9 +46,11 @@ class RecordFragment : Fragment() {
             viewModel.startTimer()
         } else {
             // в противном случае запуск других действий
-            Toast.makeText(requireContext(),
+            Toast.makeText(
+                requireContext(),
                 getString(R.string.toast_recording_permissions),
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
         }
     }
@@ -58,6 +63,13 @@ class RecordFragment : Fragment() {
         _binding = FragmentRecordBinding.inflate(layoutInflater)
         mainActivity = requireActivity() as MainActivity
 
+        // внедрение compose
+        binding.composeView.setContent {
+            VoiceRecorderTheme {
+                RecordingUI(viewModel = viewModel){ onPlayClicked() }
+            }
+        }
+
         createChannel(
             channelId = getString(R.string.notification_channel_id),
             channelName = getString(R.string.notification_channel_name)
@@ -65,6 +77,7 @@ class RecordFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -75,54 +88,59 @@ class RecordFragment : Fragment() {
             if (!it.isServiceRunning(RecordService::class.java)) {
                 viewModel.resetTimer()
             } else {
-                binding.playButton.setImageResource(R.drawable.ic_stop_36)
-            }
-        }
-
-        binding.playButton.setOnClickListener {
-            // check permissions
-            if (isPermissionsGranted()){
-                // если сервис запущен
-                if (mainActivity?.isServiceRunning(RecordService::class.java) == true){
-                    // останавливаем запись
-                    onRecord( start = false)
-                    // тогда останавливаем таймер
-                    viewModel.stopTimer()
-                } else{
-                    onRecord(start = true)
-                    viewModel.startTimer()
-                }
-            } else {
-                // start launcher
-                permissionLauncher.launch(REQUEST_PERMISSIONS)
+                viewModel.setImageResource(R.drawable.ic_stop_36)
             }
         }
     }
 
-    private fun onRecord(start: Boolean){
-        val intent : Intent = Intent(activity, RecordService::class.java)
-        if (start){
-            binding.playButton.setImageResource(R.drawable.ic_stop_36)
-            Toast.makeText(requireContext(),
+    private fun onPlayClicked() {
+        // check required permissions
+        if (isPermissionsGranted()) { // если разрешения выданы
+            if (mainActivity?.isServiceRunning(RecordService::class.java) == true) {
+                // Если сервис запущен, останавливаем запись.
+                onRecord(start = false)
+                // А также останавливаем таймер.
+                viewModel.stopTimer()
+            } else {
+                // в противном случае запускаем запись и таймер
+                onRecord(start = true)
+                viewModel.startTimer()
+            }
+        } else {
+            // если разрешения не выданы старт запроса на выдачу разрешений
+            permissionLauncher.launch(REQUEST_PERMISSIONS)
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    private fun onRecord(start: Boolean) {
+        val intent = Intent(activity, RecordService::class.java)
+        if (start) {
+            viewModel.setImageResource(R.drawable.ic_stop_36)
+            Toast.makeText(
+                requireContext(),
                 R.string.toast_recording_start,
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
             val folder =
-                File(activity?.getExternalFilesDir(null)?.absolutePath.toString()
-                        + "/VoiceRecorder")
+                File(
+                    activity?.getExternalFilesDir(null)?.absolutePath.toString()
+                            + "/VoiceRecorder"
+                )
             if (!folder.exists()) folder.mkdir()
             requireActivity().startService(intent)
             // флаг для активити держать экран активным
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }else {
-            binding.playButton.setImageResource(R.drawable.ic_mic_white_36)
+        } else {
+            viewModel.setImageResource(R.drawable.ic_mic_white_36)
             requireActivity().stopService(intent)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
-    private fun createChannel(channelId: String, channelName: String){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
                 channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
