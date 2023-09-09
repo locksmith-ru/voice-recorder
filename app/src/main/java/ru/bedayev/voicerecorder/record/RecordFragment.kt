@@ -19,7 +19,6 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.bedayev.voicerecorder.MainActivity
 import ru.bedayev.voicerecorder.R
-import ru.bedayev.voicerecorder.database.RecordDatabaseDao
 import ru.bedayev.voicerecorder.databinding.FragmentRecordBinding
 import java.io.File
 
@@ -33,8 +32,6 @@ class RecordFragment : Fragment() {
     private var mainActivity: MainActivity? = null
 
     private val viewModel by viewModels<RecordViewModel>()
-
-    private var database: RecordDatabaseDao? = null
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()

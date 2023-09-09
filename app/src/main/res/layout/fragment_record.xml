@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:contentDescription="@string/record_button_content_description"
             android:src="@drawable/ic_mic_white_36"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

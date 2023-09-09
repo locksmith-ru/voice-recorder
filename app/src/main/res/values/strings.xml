@@ -20,5 +20,6 @@
     <string name="notification_channel_id" translatable="false">ru.bedayev.voicerecorder.record.RecordService</string>
     <string name="notification_channel_name" translatable="true">Recorder</string>
     <string name="file_name">file name</string>
+    <string name="record_button_content_description">Record toggle button</string>
 
 </resources>
