@@ -48,9 +48,4 @@ class RemoveViewModel @Inject constructor(
             ).show()
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
-    }
 }

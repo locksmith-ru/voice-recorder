@@ -94,9 +94,6 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
 
-    // для привязки интерфейса через методы класса Data BindingUtil
-    //kapt("com.android.databinding:compiler:3.1.4")
-
     // Logging dependencies
     implementation("com.jakewharton.timber:timber:5.0.1")
 
@@ -109,7 +106,7 @@ dependencies {
 
 
     // Leakcanary
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
+    //debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 
     testImplementation("junit:junit:4.13.2")
     

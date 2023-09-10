@@ -66,7 +66,7 @@ class RecordFragment : Fragment() {
         // внедрение compose
         binding.composeView.setContent {
             VoiceRecorderTheme {
-                RecordingUI(viewModel = viewModel){ onPlayClicked() }
+                RecordingUI(viewModel = viewModel) { onPlayClicked() }
             }
         }
 
@@ -80,9 +80,6 @@ class RecordFragment : Fragment() {
     @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.recordViewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
 
         mainActivity?.let {
             if (!it.isServiceRunning(RecordService::class.java)) {
